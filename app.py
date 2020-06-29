@@ -14,6 +14,27 @@ CORS(app)
 api = Api(app)
 
 df = pd.read_csv('data.csv',parse_dates=['SERVICE_DATE','DOB']).set_index('SERVICE_DATE')
+ALL_DOCTORS_IDS = df["DOC_ID"].unique().tolist()
+ALL_PATIENTS_IDS = df["EMP_ID"].unique().tolist()
+df_temp = df.reset_index()
+YEARS_OF_DATA  = df_temp['SERVICE_DATE'].dt.year.unique().tolist()
+
+###################################################################################
+class get_all_doctors_ids(Resource):
+    def get(self):
+        return jsonify(ALL_DOCTORS_IDS)
+
+class get_all_patients_ids(Resource):
+    def get(self):
+        return jsonify(ALL_PATIENTS_IDS)
+
+class get_date_years(Resource):
+    def get(self):
+        return jsonify(YEARS_OF_DATA)
+###################################################################################
+
+
+
 def calculate_age(dtob):
     today = date.today()
     mnths = (today.month, today.day) < (dtob.month, dtob.day)
@@ -119,6 +140,11 @@ class PatientBubbleChartData(Resource):
                 "frequency" : mydf["Count"].values.tolist()
             }
         return json.dumps(data)
+
+
+api.add_resource(get_all_doctors_ids,'/doctors_ids')
+api.add_resource(get_all_patients_ids,'/patients_ids')
+api.add_resource(get_date_years,'/dateyears')
 
 
 api.add_resource(getHospitalData,'/hospitalData')
