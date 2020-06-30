@@ -129,7 +129,7 @@ class DoctorBubbleChartData(Resource):
                 "service" : mydf["Service"].values.tolist(),
                 "frequency" : mydf["Count"].values.tolist()
             }
-        return json.dumps(data)
+        return (data)
 
 class PatientBubbleChartData(Resource):
     def get(self,patient_id):

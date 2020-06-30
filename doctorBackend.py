@@ -20,20 +20,44 @@ def docPatientGenderAgeVisits(df,year,doc_id):
     df = df.copy()
     df = df.loc[df['DOC_ID']==doc_id]
     df = df.loc[df.index.year == year]
-    test = []
+    # test = []
     gp_1 = df[df['age']<=5]
-    test.append(gp_1.groupby('gender').MR_NO.count())
+    # test.append(gp_1.groupby('gender').MR_NO.count())
     gp_2 = df[np.logical_and(df['age']>5, df['age']<=18)]
-    test.append(gp_2.groupby('gender').MR_NO.count())
+    # test.append(gp_2.groupby('gender').MR_NO.count())
     gp_3= df[np.logical_and(df['age']>18, df['age']<=34)]
-    test.append(gp_3.groupby('gender').MR_NO.count())
+    # test.append(gp_3.groupby('gender').MR_NO.count())
     gp_4= df[np.logical_and(df['age']>34, df['age']<=65)]
-    test.append(gp_4.groupby('gender').MR_NO.count())
+    # test.append(gp_4.groupby('gender').MR_NO.count())
     gp_5= df[df['age']>65]
-    test.append(gp_5.groupby('gender').MR_NO.count())
-    
-    return { i+1 : test[i].to_dict() for i in range(0, len(test) ) }
+    # test.append(gp_5.groupby('gender').MR_NO.count())
 
+    
+    my_dict = {
+        "lessThan_Five" : gp_1.groupby('gender').MR_NO.count().to_dict(),
+        "Between_Five_And_Eighteen":gp_2.groupby('gender').MR_NO.count().to_dict(),
+        "Between_18_And_34" : gp_3.groupby('gender').MR_NO.count().to_dict(),
+        "Between_34_And_65" : gp_4.groupby('gender').MR_NO.count().to_dict(),
+        "Greater_than_65":gp_5.groupby('gender').MR_NO.count().to_dict()
+    }
+    for key in my_dict.keys():
+        if not ('F' in my_dict[key]):
+            my_dict[key]['F'] = 0
+        if not ('M' in my_dict[key]):
+            my_dict[key]['M'] = 0
+
+    female = []
+    male = []
+    for key in my_dict.keys():
+        female.append([my_dict[key]['F']][0])
+        male.append([my_dict[key]['M']][0])
+
+    my_dict = {
+        'female' : female,
+        'male' : male
+    }
+
+    return my_dict
 
 ###################################################################################
 ####################### Doctors Screen Bubble Chart ###############################
